@@ -31,7 +31,7 @@
 ### 子格式`genesis`
 `genesis`中的`key`指定了区块链的创世块中的相关字段。 所有字段都是十六进制，`0x`前缀的字符串。 所需要的字段有：
 * `seal`
-* difficulty`
+* `difficulty`
 * `author`
 * `timestamp`
 * `parentHash`
