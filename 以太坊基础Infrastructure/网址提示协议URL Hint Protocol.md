@@ -10,9 +10,9 @@
 因此，`gavofyork/tools/site/contact`包含以下四个组件：`gavofyork`、`tools`、`site`、`contact`  
 任何时候`.`都可用于在`/`以相反顺序指定组件  
 所以上述地址的非规范形式是：
-* tools.gavofyork/site/contact
-* site.tools.gavofyork/contact
-* contact.site.tools.gavofyork
+* `tools.gavofyork/site/contact`
+* `site.tools.gavofyork/contact`
+* `contact.site.tools.gavofyork`  
 注意：任何时候最左侧`/`后处理的组件与其他字母数字字符不同。
 #### 例子Example
 `eth://gavofyork/site`导致主`Registry`（`0x42`）被查询条目`gavofyork`。此条目的`register`字段（`register`实现的合约的地址）然后被查询作为入口站点。此条目的`register`字段用于显示内容。
