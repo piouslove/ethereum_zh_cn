@@ -1,4 +1,4 @@
-# 交易客户端地址编码协议ICAP: Inter exchange Client Address Protocol
+# [交易客户端地址编码协议ICAP: Inter exchange Client Address Protocol](https://github.com/ethereum/wiki/wiki/ICAP:-Inter-exchange-Client-Address-Protocol)
 第三方账户，特别是交易所账户之间的资金转移给用户造成了相当大的负担，而且由于客户账户的存款方式被识别，所以容易出错。 这个问题是由现有的银行业通过一个称为IBAN的通用编码来解决的。 该代码合并了机构和客户端帐户以及错误检测机制，实际上消除了微不足道的错误并为用户提供了相当的便利。 不幸的是，这是一个严格监管和集中的服务，只有大型，成熟的机构才能使用。 现行协议ICAP可能被视为一个适用于任何在Ethereum系统上设有资金的机构的IBAN去中心化版本。
 ## IBAN
 有关IBAN系统的良好概述，请参阅[维基百科的IBAN文章](https://en.wikipedia.org/wiki/International_Bank_Account_Number)。 IBAN编码最多包含34个不区分大小写的字母数字字符。 它包含三条信息：  
