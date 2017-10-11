@@ -28,3 +28,76 @@
 * `minGasLimit`:指定区块最小gas值的整数
 * `networkID`:指定这条区块链在网络上的索引
 注意：所有的整数都是`0x`前缀、十六进制的字符串
+### 子格式`genesis`
+`genesis`中的`key`指定了区块链的创世块中的相关字段。 所有字段都是十六进制，`0x`前缀的字符串。 所需要的字段有：
+* `seal`
+* difficulty`
+* `author`
+* `timestamp`
+* `parentHash`
+* `extraData`
+* `gasLimit`
+### 子格式`accounts`
+`accounts`对象将地址(不以`0x`开头的40位字符串)映射成对象，每个对象有许多允许的键：
+* `balance`:以`wei`为单位指定创世时账户余额的整数
+* `nonce`:指定创世时帐户nonce值的整数
+* `code`:指定创世时帐户中以`0x`为前缀的十六进制代码
+* `storage`:创世时帐户`storage`中存储的十六进制编码整数映射的对象
+* `builtin`:替代`code`，用于指定帐户代码是本地实现的，值是一个具有更多字段的对象：
+	* `name`:内置代码执行的名字字符串，例如`identity`、`ecrecover`
+	* `pricing`:指定调用此智能合约花费的枚举值
+		* `linear`:指定调用此合约线性花费的值，值是一个具有两个字段的对象：
+		`base`是以`wei`为单位且必须要支付的基础花费；`word`是每个输入单字的花费，向上舍入
+## 例子Example
+这是 Morden ECS JSON 文件
+```
+{
+	"name": "Morden",
+	"engine": {
+		"Ethash": {
+			"params": {
+				"tieBreakingGas": false,
+				"gasLimitBoundDivisor": "0x0400",
+				"minimumDifficulty": "0x020000",
+				"difficultyBoundDivisor": "0x0800",
+				"durationLimit": "0x0d",
+				"blockReward": "0x4563918244F40000",
+				"registrar" : "0xc6d9d2cd449a754c494264e1809c50e34d64562b"
+			}
+		}
+	},
+	"params": {
+		"accountStartNonce": "0x0100000",
+		"frontierCompatibilityModeLimit": "0x789b0",
+		"maximumExtraDataSize": "0x20",
+		"tieBreakingGas": false,
+		"minGasLimit": "0x1388",
+		"networkID" : "0x2"
+	},
+	"genesis": {
+		"seal": {
+			"ethereum": {
+				"nonce": "0x0000000000000042",
+				"mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+			}
+		},
+		"difficulty": "0x20000",
+		"author": "0x0000000000000000000000000000000000000000",
+		"timestamp": "0x00",
+		"parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+		"extraData": "0x",
+		"gasLimit": "0x2fefd8"
+	},
+	"nodes": [
+		"enode://b1217cbaa440e35ed471157123fe468e19e8b5ad5bedb4b1fdbcbdab6fb2f5ed3e95dd9c24a22a79fdb2352204cea207df27d92bfd21bfd41545e8b16f637499@104.44.138.37:30303"
+	],
+	"accounts": {
+		"0000000000000000000000000000000000000001": { "balance": "1", "nonce": "1048576", "builtin": { "name": "ecrecover", "pricing": { "linear": { "base": 3000, "word": 0 } } } },
+		"0000000000000000000000000000000000000002": { "balance": "1", "nonce": "1048576", "builtin": { "name": "sha256", "pricing": { "linear": { "base": 60, "word": 12 } } } },
+		"0000000000000000000000000000000000000003": { "balance": "1", "nonce": "1048576", "builtin": { "name": "ripemd160", "pricing": { "linear": { "base": 600, "word": 120 } } } },
+		"0000000000000000000000000000000000000004": { "balance": "1", "nonce": "1048576", "builtin": { "name": "identity", "pricing": { "linear": { "base": 15, "word": 3 } } } },
+		"102e61f5d8f9bc71d0ad4a084df4e65e05ce0e1c": { "balance": "1606938044258990275541962092341162602522202993782792835301376", "nonce": "1048576" }
+	}
+}
+```
+注意：内置的帐户可以使用Solidity语言。 包含在链定义文件中的没有它们的运行可能会导致意外的行为
