@@ -157,7 +157,7 @@ function makeUntrustedWithdrawal(uint amount) {
     UntrustedBank.withdraw(amount);
 }
 ```
-### 用`assert()`强制执行不变量Enforce invariants with `assert()`
+### 用`assert()`强制执行不变量invariantsEnforce invariants with `assert()`
 当断言失败（例如不变属性更改）时，断言保护将触发。 例如，在代币发行合约中的代币与以太币发行比率可能是固定的。 您可以随时使用`assert()`来验证是否是这种情况。 断言通常应与其他技术结合使用，例如暂停合约和允许升级。（否则你可能会被卡住，总是有失败的断言。）
 ```
 contract Token {
@@ -172,3 +172,24 @@ contract Token {
 }
 ```
 请注意，断言不是严格的余额数量，因为合约不需要通过`deposit()`函数就可以可以强制发送！
+### 正确使用`assert()`和`require()`Use `assert()` and `require()` properly
+在Solidity 0.4.10中，`assert()`和`require()`被引入，`require(条件)`意在用于输入验证，这应该在任何用户输入上完成，如果条件为`false`，则还原状态，`assert(条件)`也会在条件为`false`的情况下还原，但应仅用于不变量invariants：内部错误或检查合约是否已达到无效状态。 此范例允许正式分析工具验证无效操作码永远不会达成：意味着代码中没有任何不变量invariants被篡改并且该代码被正式验证。
+### 小心整数除法的舍入Beware rounding with integer division
+所有整数除法舍入到最接近的整数，如果您需要更高精度，请考虑使用乘数，或一起存储分子和分母。（将来，Solidity将有一个定点类型fixed-point type使这更容易）
+```
+// bad
+uint x = 5 / 2; // Result is 2, all integer divison rounds DOWN to the nearest integer
+
+// good
+uint multiplier = 10;
+uint x = (5 * multiplier) / 2;
+
+uint numerator = 5;
+uint denominator = 2;
+```
+### 注意以太币可以被强制发送到一个帐户Remember that Ether can be forcibly sent to an account
+谨记设置一个严格检查合约余额的不变量。
+攻击者可以强行将`wei`发送到任何帐户，这不能被阻止（即使是使用`revert()`还原函数）。
+攻击者可以通过创建一个合约来实现这一目标，并通过`1 wei`资助，并调用`selfdestruct(victimAddress)`，在`victimAddress`中没有调用代码，因此无法防止。
+### 不要假设以零余额创建合约
+攻击者可以在创建合约之前将`wei`发送到合约地址，合约不应假设其初始状态包含零余额。有关详细信息，请参阅问题61。
