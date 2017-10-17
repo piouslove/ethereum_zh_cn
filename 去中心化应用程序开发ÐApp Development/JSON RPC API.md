@@ -62,7 +62,7 @@ pyethapp -c jsonrpc.listen_port=4002 -c jsonrpc.listen_host=127.0.0.2 run
 * [eth_getCode](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode)
 * [eth_getTransactionCount](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactioncount)
 * [eth_getStorageAt](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat)
-* [eth_call](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_call)
+* [eth_call](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_call)  
 当请求作为偏移状态时，最后的默认区块参数确定区块的高度。
 `defaultBlock`参数可以使用以下选项：
 * `HEX String` - an integer block number 一个整数区块号
