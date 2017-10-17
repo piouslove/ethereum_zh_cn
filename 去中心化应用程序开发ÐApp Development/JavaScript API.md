@@ -14,7 +14,8 @@
 * npm: `npm install web3`
 * bower: `bower install web3`
 * meteor: `meteor add ethereum:web3`
-* vanilla: `link the dist./web3.min.js`
+* vanilla: `link the dist./web3.min.js`  
+  
 那么你需要创建一个web3实例，设置一个提供者。为了确保在mist中你不要覆盖已经设置的提供程序，请先检查web3是否可用：
 ```
 if (typeof web3 !== 'undefined') {
