@@ -1,4 +1,5 @@
 # 以太坊开发资源
+以下是solidity相关文件，其余内容请参考其他文件
 ## solidity官方文档
 * [Solidity官方文档中文](https://zhuanlan.zhihu.com/p/27790835)
 * [Solidity官方文档中文列表](https://www.zhihu.com/people/zaakin/posts)  
