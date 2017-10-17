@@ -42,3 +42,34 @@ pyethapp -c jsonrpc.listen_port=4002 -c jsonrpc.listen_host=127.0.0.2 run
 ```
 ## [JSON-RPC support](https://github.com/ethereum/wiki/wiki/JSON-RPC#json-rpc-support)
 ## 十六进制值编码 HEX value encoding
+目前有两个关键的数据类型通过JSON传递：未格式化的字节数组`unformatted byte arrays`和数量`quantities`。两者都使用十六进制编码传递，但对格式化有不同的要求：
+当编码`QUANTITIES`（整数，数字）时：编码为十六进制，前缀为“0x”，最紧凑的表示（微小异常：零表示为“0x0”）。 例子：
+* 0x41 (65 in decimal)
+* 0x400 (1024 in decimal)
+* WRONG: 0x (should always have at least one digit - zero is "0x0"至少应该有一个数字)
+* WRONG: 0x0400 (no leading zeroes allowed不能在0x后前导0)
+* WRONG: ff (must be prefixed 0x必须以0x开头)
+当编码`UNFORMATTED DATA`（字节数组，帐户地址，散列，字节码）时：编码为十六进制，前缀为“0x”，每字节两个十六进制数。 例子：
+* 0x41 (size 1, "A")
+* 0x004200 (size 3, "\0B\0")
+* 0x (size 0, "")
+* WRONG: 0xf0f0f (must be even number of digits必须是偶数位数)
+* WRONG: 004200 (must be prefixed 0x)
+目前，[cpp-ethereum](https://github.com/ethereum/cpp-ethereum)，[go-hohere](https://github.com/ethereum/go-ethereum)和[parity](https://github.com/paritytech/parity)通过http和IPC（Windows上的命名管道/Linux和OSX的unix套接字）提供JSON-RPC通信。go-ethereum 1.4版本和Parity 1.6版本具有Websocket支持。
+## 默认区块参数The default block parameter
+以下方法有一个额外的默认区块参数：
+* [eth_getBalance](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getbalance)
+* [eth_getCode](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getcode)
+* [eth_getTransactionCount](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_gettransactioncount)
+* [eth_getStorageAt](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getstorageat)
+* [eth_call](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_call)
+当请求作为偏移状态时，最后的默认区块参数确定区块的高度。
+`defaultBlock`参数可以使用以下选项：
+* `HEX String` - an integer block number 一个整数区块号
+* `String "earliest"` for the earliest/genesis block 最早/创世区块
+* `String "latest"` - for the latest mined block 最新开采出来的区块
+* `String "pending"` - for the pending state/transactions 待处理状态/事务
+## Curl实例说明 Curl Examples Explained
+下面的curl选项可能返回节点对内容类型申报异常complain的响应，这是因为`--data`选项将内容类型设置为`application/x-www-form-urlencoded`。如果您的节点complain，请在调用开始时放置`-H "Content-Type：application/json"`手动设置头部参数。
+这些示例也不包括必须为curl给出的最后一个参数URL/IP和端口组合，例如`127.0.0.1:8545`。
+## [JSON-RPC methods](https://github.com/ethereum/wiki/wiki/JSON-RPC#json-rpc-methods)
