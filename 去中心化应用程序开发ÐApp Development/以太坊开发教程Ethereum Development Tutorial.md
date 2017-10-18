@@ -18,4 +18,15 @@ Ethereum是一个平台，旨在让人们轻松地使用区块链技术编写分
 合约通过被称为“调用”或“发送消息”的行为彼此交互。“消息”是包含一定数量的以太币（Ethereum中使用的特殊内部货币，主要用于支付交易费用）的对象，任意大小的数据字节数组，发件人和收件人的地址。当合约收到消息时，可以选择返回一些该消息的原始发件人可以立即使用的数据。这样，发送消息就像调用一个函数一样。  
 由于合约可以发挥不同的作用，我们期望合同将相互交流。 例如，考虑一个情况，即Alice和Bob赌注100 GavCoin旧金山的温度在下一年的任何时候都不会超过35ºC。然而，爱丽丝非常安全，因为她的主要帐户使用的转发合约只发送通过三个私钥中的两个的密钥发送的消息。鲍勃对于量子密码术是偏执狂，所以他使用一个转发合约，它只传递靠传统ECDSA一起签名的 [Lamport signatures](https://en.wikipedia.org/wiki/Lamport_signature) 消息（但是由于他是老式的，他更喜欢使用基于SHA256的Lamport sig版本，这个版本不直接在Ethereum上支持）。  
 投注合约本身需要从一些合同中获取关于旧金山天气的数据，当需要将GavCoin实际发送给Alice或Bob（或更准确地说，Alice或Bob的转发合约）时，还需要与GavCoin合约进行交流）。 因此，我们可以显示帐户之间的关系：  
+  
 ![Image text](https://raw.githubusercontent.com/piouslove/ethereum_zh_cn/master/%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%C3%90App%20Development/img/contract_relationship.png)  
+  
+当鲍勃想完成下注时，会发生以下步骤：
+1. 发送一个交易，触发从Bob的EOA到Bob的转发合约的消息。
+2. Bob的转发合约将消息的散列和Lamport签名发送到作为Lamport签名验证库的合同。
+3. Lamport签名验证库看到Bob想要一个基于SHA256的Lamport sig，所以根据需要多次调用SHA256库来验证签名。
+4. 一旦Lamport签名验证库返回1，表示签名已被验证，它会向表示该投注的合约发送一条消息。
+5. 下注合约Bet检查提供旧金山温度的合约Weather Feed，以查看温度。
+6. 下注合约看到，消息响应表明温度高于35ºC，因此向GavCoin合约发送消息，将GavCoin从其账户移动到Bob的转发合约。  
+请注意，GavCoin全部被“存储”作GavCoin合同数据库中的条目;在步骤6的上下文中，“账户”这个词仅仅意味着在GavCoin合约存储中有一个数据输入，其中有一个赌注合同的地址作为键和一个余额数量作为值。收到此消息后，GavCoin合同将此值减少一定量，并增加与Bob转发合约地址相对应的条目中的值。 我们可以在下图中看到这些步骤：  
+  
