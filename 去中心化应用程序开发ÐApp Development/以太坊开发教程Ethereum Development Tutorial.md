@@ -105,4 +105,19 @@ Gas可以大致被认为是计算步骤的计数器，并且是交易执行期�
 ## 以太坊基础Basics of the Ethereum Blockchain
 以太坊区块链（或“分类帐”）是去中心化的，大量复制的数据库，其中存储所有帐户的当前状态。这个区块链使用一个称为[Patricia树](https://github.com/ethereum/wiki/wiki/Patricia-Tree)（或“trie”）的数据库来存储所有帐户; 这本质上是一种特殊的Merkle树，它充当通用键/值存储。像一个标准的Merkle树一样，Patricia树有一个“根哈希”，可以用来指代整个树，不改变根哈希树的内容就不能修改。对于每个帐户，树存储一个包含`[account_nonce，ether_balance，code_hash，storage_root]`	的4元组，其中`account_nonce`是从帐户发送的交易数（保留以防止重播攻击），`ether_balance`是帐户的余额，`code_hash`如果帐户是合同则为代码的哈希值否则为`""`，而`storage_root`是存储storage数据的另一个Patricia树的根。  
   
-![Image text]
+![Image text](https://raw.githubusercontent.com/piouslove/ethereum_zh_cn/master/%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%C3%90App%20Development/img/chaindiag.png)  
+  
+每一分钟，一个矿工生产一个新的区块（Ethereum中的采矿概念与比特币完全相同;有关更多信息，请参阅任意Bitcoin教程），该区块包含自上一个区块以来发生的交易列表和代表新状态（“状态树”）的Patricia树的根散列以及给予矿工以创造区块的以太币奖励。  
+由于Patricia树的工作方式，如果几乎没有改变，树的大部分部分将与上一个区块完全相同;因此，不需要存储数据两次，因为新树中的节点将能够简单地指向在新树和旧树完全相同的地方的旧树节点中的内存地址。如果在区块N和区块N + 1之间改变了数千条数据，即使树的总大小是十亿字节，但区块N + 1需要存储的新数据量最多为几百千字节，实际上大大减少了数据量（特别是如果同一合约内发生多次变更）。每个区块都包含前一个区块的散列（这就是区块链的由来）以及一些辅助数据，如区块号、时间戳、矿工地址和gas限制。
+## 图形界面Graphical Interfaces (OUTDATED API)
+合约本身是一件强大的东西，但它不是一个完整的Đapp。相反，Đapp被定义为合约和方便合约使用的图形界面的组合（注意：这只适用于现在; Ethereum的未来版本将包括whisper，这是一个允许在Đapp中不通过区块链，节点互相之间直接发送消息的协议）。现在，该界面被实现为一个HTML/CSS/JS网页，具有特殊的Javascript API，用于与Ethereum区块链一起使用的`eth`对象。 Javascript API的关键部分如下：  
+* `eth.transact(from, ethervalue, to, data, gaslimit, gasprice)` - 从期望的地址（注意：`from`必须是私钥，`to`必须是十六进制形式的地址）将期望的参数发送到期望的地址
+* `(string).pad(n)` - 将一个编码为字符串的数字转换为n个字节长的二进制形式
+* `eth.gasPrice` - 返回当前gas价格
+* `eth.secretToAddress(key)` - 将私钥转换为地址
+* `eth.storageAt(acct, index)` - 返回期望帐户的期望索引的存储条目
+* `eth.key` - 用户的私钥
+* `eth.watch(acct, index, f)` - 给定帐户的给定存储条目变动时调用`f`  
+您不需要任何特殊的源文件或库来使用`eth`对象;但是，您的Đapp仅在Ethereum客户端上打开时才能工作，而不是常规的Web浏览器。有关实际使用的Javascript API的示例，请参阅[此网页的源代码](http://gavwood.com/gavcoin.html)。
+## 需要持续关注的细节Fine Points To Keep Track Of
+See https://github.com/ethereum/wiki/wiki/Subtleties
